@@ -28,7 +28,7 @@ class Minimax(object):
         """ Returns the best move (as a column number) and the associated alpha
             Calls search()
         """
-        print("STACK ", depth, curr_player)
+        #print("STACK ", depth, curr_player)
 
 
         # determine opponent's color
@@ -82,13 +82,11 @@ class Minimax(object):
             # return the heuristic value of node
             v = self.value(state, curr_player)
             #self.debug_value(state, curr_player)
-
-            print(v, depth)
+            '''print(v, depth)
             for line in reversed(state):
                 print line
             print("")
-            time.sleep(1)
-
+            time.sleep(1)'''
             #print v, depth
             #print state
             return v
@@ -150,8 +148,7 @@ class Minimax(object):
                     flipped_state[row][col] = 'x'
         if color == 'o':
             state, flipped_state = flipped_state, state
-
-        self.eval.debug_evaluate(state, flipped_state, color)
+        #self.eval.debug_evaluate(state, flipped_state, color)
 
     def value(self, state, color):
         # right side up

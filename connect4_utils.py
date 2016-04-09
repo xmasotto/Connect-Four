@@ -13,8 +13,11 @@ class Eval:
     def evaluate(self, board, flipped):
         score = 0
         for mask in self.masks:
-            print(mask.count_instances(board) - mask.count_instances(flipped))*mask.weight
-            score += (mask.count_instances(board) - mask.count_instances(flipped))*mask.weight
+            #print(mask.count_instances(board) - mask.count_instances(flipped))*mask.weight
+            instance_diff = mask.count_instances(board) - mask.count_instances(flipped)
+            if instance_diff != 0:
+                score += mask.weight * instance_diff
+            #score += (mask.count_instances(board) - mask.count_instances(flipped))*mask.weight
         return score
         
     def debug_evaluate(self, board, flipped, color):
@@ -36,7 +39,7 @@ class Eval:
             if (mask.count_instances(board) > 0 or mask.count_instances(flipped) > 0):
                 print("Found " + mask.name + "!");
                 print(color)
-                time.sleep(10)
+                #time.sleep(10)
         print("\n")
     
     def json_to_masks(self, obj):
@@ -110,6 +113,10 @@ class Mask:
             return True
         if board_position == ' ' and mask_position == '-':
             return True
+        if mask_position == '?':
+            return True
+        if mask_position == 'b' and board_position == 'o':
+            return True
         return False
     
     def check_at_board_position(self, x_start, y_start, board):
@@ -172,7 +179,7 @@ j = '''[
     },
     {
         "name": "Shape_3",
-        "weight": "9999",
+        "weight": "inf",
         "mask": "xxxx",
         "transforms": [
             "0,0",
@@ -192,8 +199,8 @@ j = '''[
     },
     {
         "name": "Shape_5",
-        "weight": "9999",
-        "mask": "x---\\n-x--\\n--x-\\n---x",
+        "weight": "inf",
+        "mask": "x???\\n?x??\\n??x?\\n???x",
         "transforms": [
             "0,0",
             "90,0"

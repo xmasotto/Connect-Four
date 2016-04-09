@@ -31,8 +31,8 @@ class Game(object):
         self.finished = False
         self.winner = None
         
-        diff = 3
-        self.players[0] = AIPlayer("p1", self.colors[0], diff)
+        diff = 4
+        self.players[0] = AIPlayer("p1", self.colors[0], diff)#Player("p1", self.colors[0])
         self.players[1] = AIPlayer("p2", self.colors[1], diff)
         """
         # do cross-platform clear screen
@@ -113,15 +113,20 @@ class Game(object):
         
         # move is the column that player want's to play
         move = player.move(self.board)
-
+        if move == None:
+            move = random.randint(0,6)
+            while self.board[0][move] == ' ':
+                move = random.randint(0,6)
         for i in range(6):
             if self.board[i][move] == ' ':
                 self.board[i][move] = player.color
+                m = Minimax(self.board, j)
+                print m.value(self.board, player.color)
                 self.switchTurn()
                 self.checkForFours()
                 self.printState()
                 return
-
+        
         # if we get here, then the column is full
         print("Invalid move (column is full)")
         return
@@ -288,7 +293,7 @@ class Game(object):
     
     def printState(self):
         # cross-platform clear screen
-        os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
+        #os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
         print(u"{0}!".format(self.game_name))
         print("Round: " + str(self.round))
         for i in range(5, -1, -1):
