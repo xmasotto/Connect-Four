@@ -11,6 +11,7 @@ import random
 import os
 import time
 from minimax import Minimax
+from connect4_utils import *
 
 class Game(object):
     """ Game object that holds state of Connect 4 board and game values
@@ -22,7 +23,7 @@ class Game(object):
     winner = None
     turn = None
     players = [None, None]
-    game_name = u"Connecter Quatre\u2122" # U+2122 is "tm" this is a joke
+    game_name = u"Connecter Quatre"#\u2122" # U+2122 is "tm" this is a joke
     colors = ["x", "o"]
     
     def __init__(self):
@@ -30,18 +31,22 @@ class Game(object):
         self.finished = False
         self.winner = None
         
+        diff = 3
+        self.players[0] = AIPlayer("p1", self.colors[0], diff)
+        self.players[1] = AIPlayer("p2", self.colors[1], diff)
+        """
         # do cross-platform clear screen
-        os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
+        #os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
         print(u"Welcome to {0}!".format(self.game_name))
         print("Should Player 1 be a Human or a Computer?")
         while self.players[0] == None:
-            choice = str(input("Type 'H' or 'C': "))
+            choice = str(raw_input("Type 'H' or 'C': "))
             if choice == "Human" or choice.lower() == "h":
-                name = str(input("What is Player 1's name? "))
+                name = str(raw_input("What is Player 1's name? "))
                 self.players[0] = Player(name, self.colors[0])
             elif choice == "Computer" or choice.lower() == "c":
-                name = str(input("What is Player 1's name? "))
-                diff = int(input("Enter difficulty for this AI (1 - 4) "))
+                name = str(raw_input("What is Player 1's name? "))
+                diff = int(raw_input("Enter difficulty for this AI (1 - 4) "))
                 self.players[0] = AIPlayer(name, self.colors[0], diff+1)
             else:
                 print("Invalid choice, please try again")
@@ -49,19 +54,20 @@ class Game(object):
         
         print("Should Player 2 be a Human or a Computer?")
         while self.players[1] == None:
-            choice = str(input("Type 'H' or 'C': "))
+            choice = str(raw_input("Type 'H' or 'C': "))
             if choice == "Human" or choice.lower() == "h":
-                name = str(input("What is Player 2's name? "))
+                name = str(raw_input("What is Player 2's name? "))
                 self.players[1] = Player(name, self.colors[1])
             elif choice == "Computer" or choice.lower() == "c":
-                name = str(input("What is Player 2's name? "))
-                diff = int(input("Enter difficulty for this AI (1 - 4) "))
+                name = str(raw_input("What is Player 2's name? "))
+                diff = int(raw_input("Enter difficulty for this AI (1 - 4) "))
                 self.players[1] = AIPlayer(name, self.colors[1], diff+1)
             else:
                 print("Invalid choice, please try again")
         print("{0} will be {1}".format(self.players[1].name, self.colors[1]))
+        """
         
-    # x always goes first (arbitrary choice on my part)
+        # x always goes first (arbitrary choice on my part)
         self.turn = self.players[0]
         
         self.board = []
@@ -285,15 +291,14 @@ class Game(object):
         os.system( [ 'clear', 'cls' ][ os.name == 'nt' ] )
         print(u"{0}!".format(self.game_name))
         print("Round: " + str(self.round))
-
         for i in range(5, -1, -1):
-            print("\t", end="")
+            a = "\t"
             for j in range(7):
-                print("| " + str(self.board[i][j]), end=" ")
-            print("|")
+                a += "| " + str(self.board[i][j]) + " "
+            a += "|"
+            print a
         print("\t  _   _   _   _   _   _   _ ")
         print("\t  1   2   3   4   5   6   7 ")
-
         if self.finished:
             print("Game Over!")
             if self.winner != None:
@@ -348,10 +353,7 @@ class AIPlayer(Player):
         #time.sleep(random.randrange(8, 17, 1)/10.0)
         #return random.randint(0, 6)
         
-        m = Minimax(state)
+        m = Minimax(state, j)
         best_move, value = m.bestMove(self.difficulty, state, self.color)
+        #print value
         return best_move
-
-
-
-

@@ -8,6 +8,9 @@
 # February 27, 2012
 
 import random
+import copy
+import connect4_utils
+import time
 
 class Minimax(object):
     """ Minimax object that takes a current connect four board state
@@ -16,14 +19,17 @@ class Minimax(object):
     board = None
     colors = ["x", "o"]
     
-    def __init__(self, board):
+    def __init__(self, board, eval_function):
         # copy the board to self.board
         self.board = [x[:] for x in board]
-            
+        self.eval = eval_function
+        
     def bestMove(self, depth, state, curr_player):
         """ Returns the best move (as a column number) and the associated alpha
             Calls search()
         """
+        print("STACK ", depth, curr_player)
+
         
         # determine opponent's color
         if curr_player == self.colors[0]:
@@ -59,6 +65,9 @@ class Minimax(object):
             Returns the alpha value
         """
         
+        #print("STACK ", depth, curr_player)
+        #time.sleep(2)
+        
         # enumerate all legal moves from this state
         legal_moves = []
         for i in range(7):
@@ -71,7 +80,18 @@ class Minimax(object):
         # if this node (state) is a terminal node or depth == 0...
         if depth == 0 or len(legal_moves) == 0 or self.gameIsOver(state):
             # return the heuristic value of node
-            return self.value(state, curr_player)
+            v = self.value(state, curr_player)
+            #self.debug_value(state, curr_player)
+            
+            print(v, depth)
+            for line in reversed(state):
+                print line
+            print("")
+            time.sleep(1)
+            
+            #print v, depth
+            #print state
+            return v
         
         # determine opponent's color
         if curr_player == self.colors[0]:
@@ -119,28 +139,40 @@ class Minimax(object):
             if temp[i][column] == ' ':
                 temp[i][column] = color
                 return temp
+                
+    def debug_value(self, state, color):
+        flipped_state = copy.deepcopy(state)
+        for row in range(len(flipped_state)):
+            for col in range(len(flipped_state[0])):
+                if flipped_state[row][col] == 'x':
+                    flipped_state[row][col] = 'o'
+                elif flipped_state[row][col] == 'o':
+                    flipped_state[row][col] = 'x'
+        if color == 'o':
+            state, flipped_state = flipped_state, state
+            
+        self.eval.debug_evaluate(state, flipped_state, color)
 
     def value(self, state, color):
-        """ Simple heuristic to evaluate board configurations
-            Heuristic is (num of 4-in-a-rows)*99999 + (num of 3-in-a-rows)*100 + 
-            (num of 2-in-a-rows)*10 - (num of opponent 4-in-a-rows)*99999 - (num of opponent
-            3-in-a-rows)*100 - (num of opponent 2-in-a-rows)*10
-        """
-        if color == self.colors[0]:
-            o_color = self.colors[1]
-        else:
-            o_color = self.colors[0]
+        # right side up
+        state = copy.deepcopy(state)
+        state.reverse()
         
-        my_fours = self.checkForStreak(state, color, 4)
-        my_threes = self.checkForStreak(state, color, 3)
-        my_twos = self.checkForStreak(state, color, 2)
-        opp_fours = self.checkForStreak(state, o_color, 4)
-        #opp_threes = self.checkForStreak(state, o_color, 3)
-        #opp_twos = self.checkForStreak(state, o_color, 2)
-        if opp_fours > 0:
-            return -100000
-        else:
-            return my_fours*100000 + my_threes*100 + my_twos
+        # flip it so the current player is always 'o'
+        flipped_state = copy.deepcopy(state)
+        for row in range(len(flipped_state)):
+            for col in range(len(flipped_state[0])):
+                if flipped_state[row][col] == 'x':
+                    flipped_state[row][col] = 'o'
+                elif flipped_state[row][col] == 'o':
+                    flipped_state[row][col] = 'x'
+        if color == 'o':
+            state, flipped_state = flipped_state, state
+        ret = self.eval.evaluate(state, flipped_state)
+        
+        #upside down
+        #state.reverse()
+        return ret
             
     def checkForStreak(self, state, color, streak):
         count = 0
@@ -220,4 +252,3 @@ class Minimax(object):
             total += 1
 
         return total
-
