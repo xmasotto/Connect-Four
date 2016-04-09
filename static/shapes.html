@@ -1,0 +1,50 @@
+<html>
+  <head>
+	<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+	<script src="static/js/shapes.js"></script>
+
+	<style>
+	  .transform_table {
+	  border-spacing: 2px 2px;
+	  }
+
+	  .transform_table td {
+	  text-align: center;
+	  }
+
+	  .shape_textbox {
+	  width: 100px;
+	  height: 100px;
+	  font-size: 15pt;
+	  letter-spacing: 10px;
+	  font-family: monospace;
+	  white-space: nowrap;
+	  resize: none;
+	  }
+	</style>
+
+  </head>
+  <body onload="init()">
+	<p>
+	  <h4>INSTRUCTIONS</h4>
+	  Describe activity here??
+	</p>
+
+	<div style="margin-bottom: 30px"></div>
+
+	<table id="shape_table">
+	</table>
+
+	<div style="padding:10px;">
+	  <button onclick="add_row()">Add Shape</button>
+	  <div style="margin-top: 20px; margin-bottom: 10px">
+		<button onclick="generate_code()">Generate Code</button>
+	  </div>
+	  <textarea id="codebox"
+				style="width:350; height:225;resize:none"
+				readonly="true"
+				onclick="this.focus();this.select()">
+	  </textarea>
+	</div>
+
+  </body>
